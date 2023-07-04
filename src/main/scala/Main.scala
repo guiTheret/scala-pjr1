@@ -1,15 +1,16 @@
-/*import zio._
-import zio.Console._
-import zio.nio._
-import zio.nio.channels._
-import zio.nio.file.Path
-import java.io.IOException
-import zio.json._*/
+// import zio._
+// import zio.Console._
+// import zio.nio._
+// import zio.nio.channels._
+// import zio.nio.file.{Path, Files}
+// import java.io.IOException
+// import zio.json._
+// import zio.stream.ZStream
 
 type SudokuGrid = Array[Array[Int]]
 
 def solveSudoku(grid: SudokuGrid): Option[SudokuGrid] = {
-  // Recursive backtracking function
+  //Recursive backtracking function
   def solve(row: Int, col: Int): Option[SudokuGrid] = {
     // if all cells have been filled, then the solution is found
     if (row == 9) {
@@ -40,31 +41,29 @@ def solveSudoku(grid: SudokuGrid): Option[SudokuGrid] = {
     }
   }
 
-  // check the validity of a number for a given cell
+
+
+
   def isValid(row: Int, col: Int, num: Int): Boolean = {
     // check if the number already exists in the row
-    for (c <- 0 until 9) {
-      if (grid(row)(c) == num)
-        return false
-    }
-    // check if the number already exists in the column
-    for (r <- 0 until 9) {
-      if (grid(r)(col) == num)
-        return false
-    }
-    // check if the number already exists in the 3x3 sub-grid
-    val subGridStartRow = (row / 3) * 3
-    val subGridStartCol = (col / 3) * 3
-    for (r <- 0 until 3) {
-      for (c <- 0 until 3) {
-        if (grid(subGridStartRow + r)(subGridStartCol + c) == num)
-          return false
+    if (grid(row).contains(num))
+      false
+    else {
+      // check if the number already exists in the column
+      if (grid.exists(r => r(col) == num))
+        false
+      else {
+        // check if the number already exists in the 3x3 sub-grid
+        val subGridStartRow = (row / 3) * 3
+        val subGridStartCol = (col / 3) * 3
+        if (grid.slice(subGridStartRow, subGridStartRow + 3).exists(row => row.slice(subGridStartCol, subGridStartCol + 3).contains(num)))
+          false
+        else
+          true
       }
     }
-    // return True if all three checks didn't return False, meaning the proposed number doesn't exist in the row, the column, or the sub-grid
-    true
   }
-
+  
   //reinitializing solve to values (0,0) in case the branch of the backtracking was wrong
   solve(0, 0)
 }
@@ -102,4 +101,3 @@ def printGrid(grid: SudokuGrid): Unit = {
   }
 
 def msg = "I was compiled by Scala 3. :)"
-
