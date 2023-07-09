@@ -7,3 +7,8 @@ hs_err_pid*
 # add .vscode folder
 project/
 .vscode/
+
+target/
+.bloop/
+.metals/
+```
