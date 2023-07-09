@@ -68,14 +68,21 @@ def solveSudoku(grid: SudokuGrid): Option[SudokuGrid] = {
   solve(0, 0)
 }
 
-def printGrid(grid: SudokuGrid): Unit = {
-  for (row <- grid) {
-    for (cell <- row) {
-      print(cell + " ")
-    }
-    println()
-  }
+def printGrid(sudoku: SudokuGrid): Unit = {
+  val separator = "+------+-------+------+"
+  val formattedRows = sudoku.grouped(3).map { bigGroup =>
+    bigGroup.map { row =>
+      row.grouped(3).map { smallGroup =>
+        smallGroup.mkString("  ")
+      }.mkString(" | ")
+    }.mkString("\n")
+  }.mkString("\n\n")
+
+  println(formattedRows)
 }
+
+
+
 
 
 @main def hello: Unit =
