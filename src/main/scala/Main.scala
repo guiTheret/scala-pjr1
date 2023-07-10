@@ -1,5 +1,5 @@
 import zio._
-import zio.Console
+import zio.json._
 
 import java.io.FileNotFoundException
 import scala.io.Source
@@ -67,7 +67,7 @@ def solveSudoku(grid: SudokuGrid): Option[SudokuGrid] = {
   solve(0, 0)
 }
 
-def printGrid(sudoku: SudokuGrid): Unit = {
+def printGrid(sudoku: SudokuGrid): String = {
   val separator = "+------+-------+------+"
   val formattedRows = sudoku.grouped(3).map { bigGroup =>
     bigGroup.map { row =>
@@ -76,40 +76,46 @@ def printGrid(sudoku: SudokuGrid): Unit = {
       }.mkString(" | ")
     }.mkString("\n")
   }.mkString("\n\n")
-
-  println(formattedRows)
+  formattedRows
+  //println(formattedRows)
 }
 
-def parseFile(filePath: String): ZIO[Any, Throwable, String] = {
-  ZIO.fromTry(Try(Source.fromFile(filePath).mkString))
+
+def parseFile(filePath: String) = {
+  val file = Try(Source.fromFile("src/ressources/" + filePath))
+  file match {
+    case Success(value) => ZIO.succeed(value.mkString)
+    case Failure(exception) => ZIO.fail(exception)
+  }
 }
 
-// build a sudoku grid
-def buildSudoku(jsonString: String): Unit = {
-  val sudokuGrid = jsonString.split("\n").map(_.split(" ").map(_.toInt))
-  sudokuGrid
+def buildGrid(jsonString: String) = {
+  val sudoku = jsonString.fromJson[SudokuGrid]
+  sudoku match {
+    case Right(value) => ZIO.succeed(value)
+    case Left(exception) => ZIO.fail(exception)
+  }
 }
+
+
 
 object Main extends ZIOAppDefault {
-  def run = appLogic
+  def run =
+    for {
+      _ <- Console.printLine("Enter the path to the JSON file containing the Sudoku problem:")
+      path <- Console.readLine
+      _ <-  Console.printLine(s"You entered: $path")
 
-  private val appLogic = for {
-    _ <- Console.printLine("Sudoku Solver")
-    _ <- Console.printLine("-------------")
-    jsonFilePath <- Console.readLine("Enter the path to the json file: ")
-    /*
-    fileContent <- parseFile(jsonFilePath)
-    _ <- Console.printLine(fileContent)
-    sudokuGrid <- buildSudoku(fileContent)
-    _ <- sudokuGrid match {
-      case Right(grid) => printLine(grid.solve())
-      case Left(error) => printLine("Invalid grid")
-    }
-    */
-  } yield ()
+      jsonString <- parseFile(path)
+
+      _ <- Console.printLine(s"JSON String: $jsonString")
+    
+      grid <- buildGrid(jsonString)
+      _ <- Console.printLine(printGrid(grid))
+
+      _ <- solveSudoku(grid) match {
+        case Some(value) => Console.printLine(printGrid(value))
+        case None => Console.printLine("No solution found")
+      }
+    } yield ()
 }
-
-
-
-
-
