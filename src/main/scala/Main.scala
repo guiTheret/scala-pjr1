@@ -1,11 +1,10 @@
-// import zio._
-// import zio.Console._
-// import zio.nio._
-// import zio.nio.channels._
-// import zio.nio.file.{Path, Files}
-// import java.io.IOException
-// import zio.json._
-// import zio.stream.ZStream
+import zio._
+import zio.Console
+
+import java.io.FileNotFoundException
+import scala.io.Source
+import scala.util.{Failure, Success, Try}
+
 
 type SudokuGrid = Array[Array[Int]]
 
@@ -81,30 +80,36 @@ def printGrid(sudoku: SudokuGrid): Unit = {
   println(formattedRows)
 }
 
+def parseFile(filePath: String): ZIO[Any, Throwable, String] = {
+  ZIO.fromTry(Try(Source.fromFile(filePath).mkString))
+}
+
+// build a sudoku grid
+def buildSudoku(jsonString: String): Unit = {
+  val sudokuGrid = jsonString.split("\n").map(_.split(" ").map(_.toInt))
+  sudokuGrid
+}
+
+object Main extends ZIOAppDefault {
+  def run = appLogic
+
+  private val appLogic = for {
+    _ <- Console.printLine("Sudoku Solver")
+    _ <- Console.printLine("-------------")
+    jsonFilePath <- Console.readLine("Enter the path to the json file: ")
+    /*
+    fileContent <- parseFile(jsonFilePath)
+    _ <- Console.printLine(fileContent)
+    sudokuGrid <- buildSudoku(fileContent)
+    _ <- sudokuGrid match {
+      case Right(grid) => printLine(grid.solve())
+      case Left(error) => printLine("Invalid grid")
+    }
+    */
+  } yield ()
+}
 
 
 
 
-@main def hello: Unit =
-  println("Hello world!")
-  println(msg)
-  val puzzle: SudokuGrid = Array(
-    Array(5, 3, 0, 0, 7, 0, 0, 0, 0),
-    Array(6, 0, 0, 1, 9, 5, 0, 0, 0),
-    Array(0, 9, 8, 0, 0, 0, 0, 6, 0),
-    Array(8, 0, 0, 0, 6, 0, 0, 0, 3),
-    Array(4, 0, 0, 8, 0, 3, 0, 0, 1),
-    Array(7, 0, 0, 0, 2, 0, 0, 0, 6),
-    Array(0, 6, 0, 0, 0, 0, 2, 8, 0),
-    Array(0, 0, 0, 4, 1, 9, 0, 0, 5),
-    Array(0, 0, 0, 0, 8, 0, 0, 7, 9)
-  )
-  solveSudoku(puzzle) match {
-    case Some(solution) =>
-      println("Solution:")
-      printGrid(solution)
-    case None =>
-      println("No solution found.")
-  }
 
-def msg = "I was compiled by Scala 3. :)"
