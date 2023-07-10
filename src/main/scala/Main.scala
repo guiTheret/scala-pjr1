@@ -1,45 +1,46 @@
-// import zio._
-// import zio.Console._
-// import zio.nio._
-// import zio.nio.channels._
-// import zio.nio.file.{Path, Files}
-// import java.io.IOException
-// import zio.json._
-// import zio.stream.ZStream
+import zio._
+import zio.Console._
+import zio.nio._
+import zio.nio.channels._
+import zio.nio.file.{Path, Files}
+import java.io.IOException
+import zio.json._
+import zio.stream.ZStream
+import scala.util.boundary, boundary.break
 
 type SudokuGrid = Array[Array[Int]]
 
 def solveSudoku(grid: SudokuGrid): Option[SudokuGrid] = {
   //Recursive backtracking function
-  def solve(row: Int, col: Int): Option[SudokuGrid] = {
-    // if all cells have been filled, then the solution is found
-    if (row == 9) {
-      Some(grid)
-    // if we reached the end of a row, we move to the next row
-    } else if (col == 9) {
-      solve(row + 1, 0)
-    // if a cell is already filled, we move to the next cell
-    } else if (grid(row)(col) != 0) {
-      solve(row, col + 1)
-    // trying values from 1 to 9 for the last cell of value 0 value
-    } else {
-      // try all possible values for the current cell
-      for (num <- 1 to 9) {
-        // isValid to check that the current value is the correct one
-        if (isValid(row, col, num)) {
-          grid(row)(col) = num
-          solve(row, col + 1) match {
-            // if a solution has been been, it is returned
-            case Some(solution) => return Some(solution)
-            // if no solution is found, the cell is reset to 0
-            case None => grid(row)(col) = 0
-          }
+  def solve(row: Int, col: Int): Option[SudokuGrid] = boundary {
+  // if all cells have been filled, then the solution is found
+  if (row == 9) {
+    break(Some(grid))
+  // if we reached the end of a row, we move to the next row
+  } else if (col == 9) {
+    solve(row + 1, 0)
+  // if a cell is already filled, we move to the next cell
+  } else if (grid(row)(col) != 0) {
+    solve(row, col + 1)
+  // trying values from 1 to 9 for the last cell of value 0 value
+  } else {
+    // try all possible values for the current cell
+    for (num <- 1 to 9) {
+      // isValid to check that the current value is the correct one
+      if (isValid(row, col, num)) {
+        grid(row)(col) = num
+        solve(row, col + 1) match {
+          // if a solution has been been, it is returned
+          case Some(solution) => break(Some(solution))
+          // if no solution is found, the cell is reset to 0
+          case None => grid(row)(col) = 0
         }
       }
-      // if no solution is found, "None" is returned, to try a different value for the previous cell
-      None
     }
+    // if no solution is found, "None" is returned, to try a different value for the previous cell
+    break(None)
   }
+}
 
 
 
