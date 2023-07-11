@@ -76,7 +76,7 @@ def printGrid(sudoku: SudokuGrid): String = {
       }.mkString(" | ")
     }.mkString("\n")
   }.mkString("\n\n")
-  formattedRows
+  formattedRows + "\n"
   //println(formattedRows)
 }
 
