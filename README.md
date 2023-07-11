@@ -13,18 +13,28 @@ In order to do so, we will use ZIO library for functional programming and asynch
 The input must be a 2-dimensional array of integers, to represent the rows and columns of the sudoku : 
 type SudokuGrid = Array[Array[Int]]
 
-Expected format for json sudoku grid ([test.json][test.json], [1.json][1.json]) : 
+Expected format for json sudoku grid ([test.json][test.json], [1.json][1.json]) :
+
 [  
 
   [0, 9, 0, 8, 6, 5, 2, 0, 0],
+  
   [0, 0, 5, 0, 1, 2, 0, 6, 8],
+  
   [0, 0, 0, 0, 0, 0, 0, 4, 0],
+  
   [0, 0, 0, 0, 0, 8, 0, 5, 6],
+  
   [0, 0, 8, 0, 0, 0, 4, 0, 0],
+  
   [4, 5, 0, 9, 0, 0, 0, 0, 0],
+  
   [0, 8, 0, 0, 0, 0, 0, 0, 0],
+  
   [2, 4, 0, 1, 7, 0, 5, 0, 0],
+  
   [0, 0, 7, 2, 8, 3, 0, 9, 0]
+  
 ]
 
 ## Functionality
