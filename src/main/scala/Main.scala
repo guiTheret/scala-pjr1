@@ -68,7 +68,7 @@ def solveSudoku(grid: SudokuGrid): Option[SudokuGrid] = {
 }
 
 def printGrid(sudoku: SudokuGrid): String = {
-  val separator = "+------+-------+------+"
+  val separator = "--------+---------+---------"
   val formattedRows = sudoku.grouped(3).map { bigGroup =>
     bigGroup.map { row =>
       row.map {
@@ -78,7 +78,7 @@ def printGrid(sudoku: SudokuGrid): String = {
         smallGroup.mkString("  ")
       }.mkString(" | ")
     }.mkString("\n")
-  }.mkString("\n\n")
+  }.mkString("\n"+separator+"\n")
   formattedRows + "\n"
   //println(formattedRows)
 }
@@ -114,10 +114,11 @@ object Main extends ZIOAppDefault {
       _ <- Console.printLine(s"JSON String: $jsonString")
     
       grid <- buildGrid(jsonString)
+      _ <- Console.printLine("The original grid :")
       _ <- Console.printLine(printGrid(grid))
 
       _ <- solveSudoku(grid) match {
-        case Some(value) => Console.printLine(printGrid(value))
+        case Some(value) => Console.printLine("The solution :\n"+printGrid(value))
         case None => Console.printLine("No solution found")
       }
     } yield ()
