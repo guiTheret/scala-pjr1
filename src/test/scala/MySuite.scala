@@ -1,5 +1,8 @@
 import zio.test._
 import zio.test.Assertion._
+import zio.Console._
+
+import scala.util.control.Breaks._
 
 object SudokuSolverSpec extends ZIOSpecDefault  {
   def spec = suite("Sudoku Solver")(
@@ -29,8 +32,43 @@ object SudokuSolverSpec extends ZIOSpecDefault  {
         )
 
         val result = solveSudoku(puzzle)
+        assert(areArraysEqual(result.get, expectedSolution))(isTrue)
+      },
+      test("solveSudoku should fail") {
+        val puzzle = Array(
+          Array(5, 3, 0, 0, 7, 0, 0, 0, 0),
+          Array(6, 0, 0, 1, 9, 5, 0, 0, 0),
+          Array(0, 9, 8, 0, 0, 0, 0, 6, 0),
+          Array(8, 0, 0, 0, 6, 0, 0, 0, 3),
+          Array(4, 0, 0, 8, 0, 3, 0, 0, 1),
+          Array(7, 0, 0, 0, 2, 0, 0, 0, 6),
+          Array(0, 6, 0, 0, 0, 0, 2, 8, 0),
+          Array(0, 0, 0, 4, 1, 9, 0, 0, 5),
+          Array(6, 0, 0, 0, 8, 0, 0, 7, 9)
+        )
 
-        assert(result)(isSome(equalTo(expectedSolution)))
+        val result = solveSudoku(puzzle)
+        assert(result)(isNone)
       }
     )
+}
+
+def areArraysEqual(arr1: Array[Array[Int]], arr2: Array[Array[Int]]): Boolean = {
+  if (arr1.length != arr2.length || arr1(0).length != arr2(0).length)
+    return false
+
+  var equal = true
+
+  breakable {
+    for (i <- 0 until arr1.length) {
+      for (j <- 0 until arr1(0).length) {
+        if (arr1(i)(j) != arr2(i)(j)) {
+          equal = false
+          break
+        }
+      }
+    }
+  }
+
+  equal
 }
