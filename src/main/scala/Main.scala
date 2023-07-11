@@ -71,7 +71,10 @@ def printGrid(sudoku: SudokuGrid): String = {
   val separator = "+------+-------+------+"
   val formattedRows = sudoku.grouped(3).map { bigGroup =>
     bigGroup.map { row =>
-      row.grouped(3).map { smallGroup =>
+      row.map {
+        case 0 => "x"
+        case n => n.toString
+      }.grouped(3).map { smallGroup =>
         smallGroup.mkString("  ")
       }.mkString(" | ")
     }.mkString("\n")
