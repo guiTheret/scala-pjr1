@@ -14,7 +14,8 @@ The input must be a 2-dimensional array of integers, to represent the rows and c
 type SudokuGrid = Array[Array[Int]]
 
 Expected format for json sudoku grid ([test.json][test.json], [1.json][1.json]) : 
-[
+[  
+
   [0, 9, 0, 8, 6, 5, 2, 0, 0],
   [0, 0, 5, 0, 1, 2, 0, 6, 8],
   [0, 0, 0, 0, 0, 0, 0, 4, 0],
